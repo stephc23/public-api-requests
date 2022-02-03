@@ -1,14 +1,13 @@
 const randomUserURL = 'https://randomuser.me/api/?results=12&nat=us&inc=name,location,email,dob,cell,picture';
 const body = document.querySelector('body');
 const galleryDiv = document.querySelector('#gallery');
-const cardDivs = galleryDiv.children;
 
 // ------------------------------------------------------------------------
-// Function to fetch data
+// Fetch data
 // ------------------------------------------------------------------------
 
 /**
- * Request data and, if the response is successful, parse the data as JSON.
+ * Request data and, if the response is successful, parse the data as JSON and get array stored in `results` property.
  * @param {string} url - The API endpoint.
  * @returns {object} A promise that resolves to an array of objects, each representing an employee.
  */
@@ -27,9 +26,13 @@ async function getEmployees(url) {
     }
 }
 
+// ------------------------------------------------------------------------
+// Generate HTML
+// ------------------------------------------------------------------------
+
 /**
- * Generate HTML for the gallery using data from the API.
- * @param {array} employees - The array of objects, each representing an employee.
+ * Generate HTML for the gallery using data from the API and insert HTML.
+ * @param {array} employees - The array of objects from the API, each representing an employee.
  */
 function addGalleryHTML(employees) {
     const galleryHTML = employees.map(employee => `
@@ -48,12 +51,10 @@ function addGalleryHTML(employees) {
 }   
 
 /**
- * Generates HTML for the modal window.
+ * Generate HTML for the modal using data from the API and insert HTML.
  * @param {array} employees - The array of objects from the API, each representing an employee.
- * @param {number} index - The index of the card div the user clicks on, which is also the index of that employee object in the array.
- * @returns {object} A promise that resolves to the modal HTML.
  */
- function addModalHTML(employees) { 
+function addModalHTML(employees) { 
     employees.forEach(employee => {
         const dob = employee.dob.date;
         const dobFormatted = `${dob.slice(5, 7)}/${dob.slice(8, 10)}/${dob.slice(0, 4)}`;
@@ -82,24 +83,25 @@ function addGalleryHTML(employees) {
     });
  }
 
-async function generateHTML() {
-    const employees = await getEmployees(randomUserURL);
-    addGalleryHTML(employees);
-    addModalHTML(employees);
-}
+getEmployees(randomUserURL)
+    .then(employees => {
+        addGalleryHTML(employees);
+        addModalHTML(employees);
+    })
 
-generateHTML();
-
-
-
+// ------------------------------------------------------------------------
+// Display the modal
+// ------------------------------------------------------------------------
 
 /**
- * Get the index of the employee the user clicks on by finding the div stored in `cards` that matches the clicked div.
+ * Get the index of the employee the user clicks on by finding the div stored in `cardDivs` that matches the clicked div.
  * @param {object} event - The event object from the event handler. 
- * @returns {number} The index of the chosen card div.
+ * @returns {number} The index of the chosen card div, which is also the index of the employee object in the array.
  */
 function getEmployeeIndex(event) {
     const element = event.target;
+    const cardDivs = galleryDiv.children;
+
     let chosenDiv;
     if (element.tagName === 'DIV' && element.className === 'card') {
         chosenDiv = element;
@@ -118,7 +120,7 @@ function getEmployeeIndex(event) {
 }
 
 /**
- * Display the modal by calling `getEmployeeIndex` and `generateModalHTML`; activate modal close button after inserting the modal HTML.
+ * Display the modal and add an event listener to the modal close button
  * @param {object} event - The event object from the event handler.
  */
 function showModal(event) {
@@ -132,10 +134,6 @@ function showModal(event) {
         activeModalDiv.style.display = 'none';
     });
 }
-
-// ------------------------------------------------------------------------
-// Event listener
-// ------------------------------------------------------------------------
 
 galleryDiv.addEventListener('click', event => {
     if (event.target.className !== 'gallery') {
