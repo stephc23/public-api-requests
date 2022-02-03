@@ -18,3 +18,22 @@ async function getJSON(url) {
     }
 }
 
+/**
+ * Generate HTML for the gallery using data from the API.
+ * @param {array} employees - The array of objects, each representing an employee.
+ */
+function addGalleryHTML(employees) {
+    const galleryHTML = employees.map(employee => `
+            <div class='card'>
+                <div class='card-img-container'>
+                    <img class='card-img' src=${employee.picture.thumbnail} alt='profile picture'>
+                </div>
+                <div class='card-info-container'>
+                    <h3 id='name' class='card-name cap'>${employee.name.first} ${employee.name.last}</h3>
+                    <p class='card-text'>${employee.email}</p>
+                    <p class='card-text cap'>${employee.location.city}, ${employee.location.state}</p>
+                </div>
+            </div>
+        `).join('');
+    galleryDiv.insertAdjacentHTML('beforeend', galleryHTML);
+}
