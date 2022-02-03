@@ -1,6 +1,7 @@
-const galleryDiv = document.querySelector('#gallery');
+const randomUserURL = 'https://randomuser.me/api/?results=12&nat=us&inc=name,location,email,dob,cell,picture&seed=awesome';
 const body = document.querySelector('body');
-const cards = galleryDiv.children;
+const galleryDiv = document.querySelector('#gallery');
+const cardDivs = galleryDiv.children;
 
 // ------------------------------------------------------------------------
 // Function to fetch data
@@ -48,7 +49,7 @@ function addGalleryHTML(employees) {
     galleryDiv.insertAdjacentHTML('beforeend', galleryHTML);
 }
 
-getJSON('https://randomuser.me/api/?results=12&nat=us&inc=name,location,email,dob,cell,picture&seed=awesome')
+getJSON(randomUserURL)
     .then(json => {
         const employees = json.results;
         addGalleryHTML(employees);
@@ -59,24 +60,24 @@ getJSON('https://randomuser.me/api/?results=12&nat=us&inc=name,location,email,do
 // ------------------------------------------------------------------------
 
 /**
- * Get the index of the selected employee by finding the div.card element stored in `cards` that matches the selected div.card element.
+ * Get the index of the employee the user clicks on by finding the div stored in `cards` that matches the clicked div.
  * @param {object} event - The event object from the event handler. 
- * @returns {number} The index of the selected div, which is also the index of the seleceted employee in the array of employee objects.
+ * @returns {number} The index of the chosen card div.
  */
 function getEmployeeIndex(event) {
     const element = event.target;
-    let selectedCard;
+    let chosenDiv;
     if (element.tagName === 'DIV' && element.className === 'card') {
-        selectedCard = element;
+        chosenDiv = element;
     } else if (element.tagName === 'DIV' && element.className !== 'card') {
-        selectedCard = element.parentNode;
+        chosenDiv = element.parentNode;
     } else {
-        selectedCard = element.parentNode.parentNode;
+        chosenDiv = element.parentNode.parentNode;
     }
 
-    for (let i = 0; i < cards.length; i++) {
-        const card = cards[i];
-        if (card === selectedCard) {
+    for (let i = 0; i < cardDivs.length; i++) {
+        const cardDiv = cardDivs[i];
+        if (cardDiv === chosenDiv) {
             return i;
         }
     }
@@ -84,11 +85,11 @@ function getEmployeeIndex(event) {
 
 /**
  * Generates HTML for the modal window.
- * @param {number} index - The index of the selected employee in the array of employee objects.
+ * @param {number} index - The index of the card div the user clicks on, which is also the index of that employee object in the array.
  * @returns {object} A promise that resolves to the modal HTML.
  */
 async function generateModalHTML(index) {
-    const json = await getJSON('https://randomuser.me/api/?results=12&nat=us&inc=name,location,email,dob,cell,picture&seed=awesome');
+    const json = await getJSON(randomUserURL);
     const employees = json.results;
     const employee = employees[index];
     const dob = employee.dob.date;
