@@ -2,10 +2,14 @@ const galleryDiv = document.querySelector('#gallery');
 const body = document.querySelector('body');
 const cards = galleryDiv.children;
 
+// ------------------------------------------------------------------------
+// Function to fetch data
+// ------------------------------------------------------------------------
+
 /**
  * Request data and, if the response is successful, parse the data as JSON.
  * @param {string} url - The API endpoint.
- * @returns {object} A promise for the parsed JSON.
+ * @returns {object} A promise that resolves to the parsed JSON.
  */
 async function getJSON(url) {
     try {
@@ -20,6 +24,9 @@ async function getJSON(url) {
     }
 }
 
+// ------------------------------------------------------------------------
+// Functions to get and display random employees
+// ------------------------------------------------------------------------
 
 /**
  * Generate HTML for the gallery using data from the API.
@@ -47,7 +54,15 @@ getJSON('https://randomuser.me/api/?results=12&nat=us&inc=name,location,email,do
         addGalleryHTML(employees);
     });
 
+// ------------------------------------------------------------------------
+// Functions to create a modal window
+// ------------------------------------------------------------------------
 
+/**
+ * Get the index of the selected employee by finding the div.card element stored in `cards` that matches the selected div.card element.
+ * @param {object} event - The event object from the event handler. 
+ * @returns {number} The index of the selected div, which is also the index of the seleceted employee in the array of employee objects.
+ */
 function getEmployeeIndex(event) {
     const element = event.target;
     let selectedCard;
@@ -67,6 +82,11 @@ function getEmployeeIndex(event) {
     }
 }
 
+/**
+ * Generates HTML for the modal window.
+ * @param {number} index - The index of the selected employee in the array of employee objects.
+ * @returns {object} A promise that resolves to the modal HTML.
+ */
 async function generateModalHTML(index) {
     const json = await getJSON('https://randomuser.me/api/?results=12&nat=us&inc=name,location,email,dob,cell,picture&seed=awesome');
     const employees = json.results;
@@ -94,6 +114,9 @@ async function generateModalHTML(index) {
     return modalHTML;
 }
 
+/**
+ * Add event listener to the modal close button.
+ */
 function activateModalClose() {
     const closeButton = body.querySelector('#modal-close-btn');
     const modalContainer = body.querySelector('.modal-container');
@@ -102,16 +125,23 @@ function activateModalClose() {
     });
 }
 
-function showModal(event) {
+/**
+ * Display the modal by calling `getEmployeeIndex` and `generateModalHTML`; activate modal close button after inserting the modal HTML.
+ * @param {object} event - The event object from the event handler.
+ */
+async function showModal(event) {
     const index = getEmployeeIndex(event);
-    generateModalHTML(index)
-        .then(modalHTML => body.insertAdjacentHTML('beforeend', modalHTML));
+    const modalHTML = await generateModalHTML(index);
+    body.insertAdjacentHTML('beforeend', modalHTML);
     activateModalClose();
 }
 
+// ------------------------------------------------------------------------
+// Event listener
+// ------------------------------------------------------------------------
+
 galleryDiv.addEventListener('click', event => {
-    const element = event.target;
-    if (element.className !== 'gallery') {
+    if (event.target.className !== 'gallery') {
         showModal(event);
     }
 });
