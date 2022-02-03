@@ -11,7 +11,7 @@ async function getJSON(url) {
         if (response.ok) {
             return await response.json();
         } else {
-            throw `Fetch unsuccessful: ${response.statusText}`;
+            throw `Fetch unsuccessful: ${response.status}`;
         }
     } catch (error) {
         console.log(error);
@@ -26,7 +26,7 @@ function addGalleryHTML(employees) {
     const galleryHTML = employees.map(employee => `
             <div class='card'>
                 <div class='card-img-container'>
-                    <img class='card-img' src=${employee.picture.thumbnail} alt='profile picture'>
+                    <img class='card-img' src=${employee.picture.large} alt='profile picture'>
                 </div>
                 <div class='card-info-container'>
                     <h3 id='name' class='card-name cap'>${employee.name.first} ${employee.name.last}</h3>
@@ -37,3 +37,9 @@ function addGalleryHTML(employees) {
         `).join('');
     galleryDiv.insertAdjacentHTML('beforeend', galleryHTML);
 }
+
+getJSON('https://randomuser.me/api/?results=12&nat=us&inc=name,location,email,dob,cell,picture')
+    .then(json => {
+        const employees = json.results;
+        addGalleryHTML(employees);
+    });
