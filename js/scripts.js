@@ -3,11 +3,11 @@ const body = document.querySelector('body');
 const galleryDiv = document.querySelector('#gallery');
 
 // ------------------------------------------------------------------------
-// Fetch data
+// Function to fetch data
 // ------------------------------------------------------------------------
 
 /**
- * Request data and, if the response is successful, parse the data as JSON and get array stored in `results` property.
+ * Request data and, if the response is successful, parse data as JSON and get the array stored in the `results` property.
  * @param {string} url - The API endpoint.
  * @returns {object} A promise that resolves to an array of objects, each representing an employee.
  */
@@ -27,11 +27,11 @@ async function getEmployees(url) {
 }
 
 // ------------------------------------------------------------------------
-// Generate HTML
+// Functions to generate HTML
 // ------------------------------------------------------------------------
 
 /**
- * Generate HTML for the gallery using data from the API and insert HTML.
+ * Generate HTML for the gallery and add HTML to the gallery div.
  * @param {array} employees - The array of objects from the API, each representing an employee.
  */
 function addGalleryHTML(employees) {
@@ -51,7 +51,7 @@ function addGalleryHTML(employees) {
 }   
 
 /**
- * Generate HTML for the modal using data from the API and insert HTML.
+ * Generate HTML for the modal, add HTML to the body element, and set default display style to `none`.
  * @param {array} employees - The array of objects from the API, each representing an employee.
  */
 function addModalHTML(employees) { 
@@ -61,9 +61,9 @@ function addModalHTML(employees) {
         const cellFormatted = employee.cell.replace('-', ' ');
 
         const script = body.lastElementChild;
-        const modalDiv = document.createElement('div');
-        modalDiv.className = 'modal-container';
-        modalDiv.innerHTML = `
+        const modal = document.createElement('div');
+        modal.className = 'modal-container';
+        modal.innerHTML = `
             <div class="modal">
                 <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
                 <div class="modal-info-container">
@@ -78,10 +78,14 @@ function addModalHTML(employees) {
                 </div>
             </div>
         `;
-        body.insertBefore(modalDiv, script);
-        modalDiv.style.display = 'none';
+        body.insertBefore(modal, script);
+        modal.style.display = 'none';
     });
  }
+
+// ------------------------------------------------------------------------
+// Call functions
+// ------------------------------------------------------------------------
 
 getEmployees(randomUserURL)
     .then(employees => {
@@ -90,11 +94,11 @@ getEmployees(randomUserURL)
     })
 
 // ------------------------------------------------------------------------
-// Display the modal
+// Functions to display the modal
 // ------------------------------------------------------------------------
 
 /**
- * Get the index of the employee the user clicks on by finding the div stored in `cardDivs` that matches the clicked div.
+ * Get the index of the employee the user clicks on by finding the card div that matches the clicked div.
  * @param {object} event - The event object from the event handler. 
  * @returns {number} The index of the chosen card div, which is also the index of the employee object in the array.
  */
@@ -120,23 +124,31 @@ function getEmployeeIndex(event) {
 }
 
 /**
- * Display the modal and add an event listener to the modal close button
+ * Display the modal for the chosen employee and add an event listener for closing the modal.
  * @param {object} event - The event object from the event handler.
  */
 function showModal(event) {
     const index = getEmployeeIndex(event);
-    const modalDivs = document.querySelectorAll('.modal-container');
-    const activeModalDiv = modalDivs[index];
-    const closeButton = activeModalDiv.firstElementChild.firstElementChild;
+    const modals = document.querySelectorAll('.modal-container');
+    const activeModal = modals[index];
+    const closeButton = activeModal.firstElementChild.firstElementChild;
+    const hideModal = () => activeModal.style.display = 'none';
     
-    activeModalDiv.style.display = 'block'; 
-    closeButton.addEventListener('click', () => {
-        activeModalDiv.style.display = 'none';
+    activeModal.style.display = 'block'; 
+    closeButton.addEventListener('click', hideModal);
+    body.addEventListener('click', e => {
+        if (e.target === activeModal) {
+            hideModal();
+        }
     });
 }
 
-galleryDiv.addEventListener('click', event => {
-    if (event.target.className !== 'gallery') {
-        showModal(event);
+// ------------------------------------------------------------------------
+// Event listener
+// ------------------------------------------------------------------------
+
+galleryDiv.addEventListener('click', e => {
+    if (e.target.className !== 'gallery') {
+        showModal(e);
     }
 });
