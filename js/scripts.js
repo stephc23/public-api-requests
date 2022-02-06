@@ -1,8 +1,6 @@
 const randomUserURL = 'https://randomuser.me/api/?results=12&nat=us&inc=name,location,email,dob,cell,picture';
 const body = document.querySelector('body');
 const galleryDiv = document.querySelector('#gallery');
-const cardDivs = galleryDiv.children;
-const searchDiv = document.querySelector('.search-container');
 
 // ------------------------------------------------------------------------
 // Function to fetch data
@@ -85,64 +83,15 @@ function addModalHTML(employees) {
     });
  }
 
-function addSearchHTML() {
-    const searchHTML = `
-        <form action="#" method="get">
-            <input type="search" id="search-input" class="search-input" placeholder="Search...">
-            <input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
-        </form>
-    `;
-    searchDiv.insertAdjacentHTML('beforeend', searchHTML);
-}
-
-
 // ------------------------------------------------------------------------
 // Call functions
 // ------------------------------------------------------------------------
-
-addSearchHTML();
 
 getEmployees(randomUserURL)
     .then(employees => {
         addGalleryHTML(employees);
         addModalHTML(employees);
     })
-
-// ------------------------------------------------------------------------
-// Search
-// ------------------------------------------------------------------------
-
-function filterEmployees(employeeCards) {
-    const searchInput = document.querySelector('#search-input');
-    const searchValue = searchInput.value.toLowerCase();
-    const filteredCards = [];
-
-    for (const employeeCard of employeeCards) {
-        const name = employeeCard.querySelector('#name').textContent.toLowerCase();
-        if (name.includes(searchValue)) {
-            filteredCards.push(employeeCard);
-        }
-    }
-    return filteredCards;
-}
-
-function showFilteredCards(filteredCards) {
-    galleryDiv.textContent = '';
-
-    if (filteredCards.length > 0) {
-        for (filteredCard of filteredCards) {
-            galleryDiv.appendChild(filteredCard);
-        }
-    } else {
-        galleryDiv.insertAdjacentHTML('beforeend', 'No results found.');
-    } 
-}
-
-const searchButton = document.querySelector('#search-submit');
-searchButton.addEventListener('click', () => {
-    const filteredCards = filterEmployees(cardDivs);
-    showFilteredCards(filteredCards);
-});
 
 // ------------------------------------------------------------------------
 // Functions to display the modal
