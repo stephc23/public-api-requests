@@ -3,7 +3,7 @@ const body = document.querySelector('body');
 const galleryDiv = document.querySelector('#gallery');
 
 // ------------------------------------------------------------------------
-// Function to fetch data
+// Create function to fetch data
 // ------------------------------------------------------------------------
 
 /**
@@ -27,7 +27,7 @@ async function getEmployees(url) {
 }
 
 // ------------------------------------------------------------------------
-// Functions to generate HTML
+// Create functions to generate HTML
 // ------------------------------------------------------------------------
 
 /**
@@ -84,7 +84,7 @@ function addModalHTML(employees) {
  }
 
 // ------------------------------------------------------------------------
-// Call functions
+// Call functions to fetch data and generate HTML
 // ------------------------------------------------------------------------
 
 getEmployees(randomUserURL)
@@ -94,7 +94,7 @@ getEmployees(randomUserURL)
     })
 
 // ------------------------------------------------------------------------
-// Functions to display the modal
+// Create functions to display a modal
 // ------------------------------------------------------------------------
 
 /**
@@ -124,7 +124,7 @@ function getEmployeeIndex(event) {
 }
 
 /**
- * Display the modal for the chosen employee and add an event listener for closing the modal.
+ * Display the modal for the chosen employee and add event listeners for closing the modal.
  * @param {object} event - The event object from the event handler.
  */
 function showModal(event) {
@@ -144,7 +144,7 @@ function showModal(event) {
 }
 
 // ------------------------------------------------------------------------
-// Event listener
+// Add event listener for displaying a modal
 // ------------------------------------------------------------------------
 
 galleryDiv.addEventListener('click', e => {
